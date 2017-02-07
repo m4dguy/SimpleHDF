@@ -91,10 +91,13 @@ namespace cv{
 				dataspace.getSimpleExtentDims(dims, maxsize);
 				const int width = (int)dims[widthDimension];
 				const int height = (int)dims[heightDimension];
+				const int type = getCvType(dataset);
 
-				dst.release();
-				dst = cv::Mat(cv::Size((int)width, (int)height), getCvType(dataset));
-				//dst = cv::Mat(cv::Size((int)width, (int)height), CV_16UC1);
+				if ((dst.size().width != width) || (dst.size().height != height) || (dst.type() != type)){
+					dst.release();
+					dst = cv::Mat(cv::Size((int)width, (int)height), type);
+				}
+
 				void *buffer = (void*)dst.data;
 
 				hsize_t *offset = (hsize_t*)calloc(dimCount, sizeof(hsize_t));
