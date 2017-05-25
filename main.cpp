@@ -5,6 +5,8 @@
 
 #include <H5Cpp.h>
 
+#include <string>
+
 #include "cv_hdf.hpp"
 
 
@@ -37,10 +39,12 @@ void onTrackbar(int slice, void*)
 	src -= min;
 	src *= (255. / max);
 
+	//src = cv::min(src, 255.);
+	//src = cv::max(src, 0.);
+	src.convertTo(dst, CV_8UC1);
+
 	int width = src.size().width;
 	int height = src.size().height;
-
-	src.convertTo(dst, CV_8UC1);
 	cv::resize(dst, dst, cv::Size((int)(width * SCALE), (int)(height * SCALE)));	
 
 	// here are some sample lines...
@@ -49,6 +53,22 @@ void onTrackbar(int slice, void*)
 
 	cv::imshow("HDF", dst);
 }
+
+
+void dumpSlices(H5::DataSet& dataset, const uint startslice = 0, const uint endslice = 10){
+	cv::Mat dst;
+	std::string outfile;
+	for (uint i = startslice; i < endslice; ++i){
+		outfile = "spim_" + std::to_string(i) + ".png";
+		cv::simpleHDF::readSlice(dataset, i, dst);
+		dst = cv::min(dst, 255.);
+		dst = cv::max(dst, 0.);
+		dst.convertTo(dst, CV_8UC1);
+		cv::imwrite(outfile.c_str(), dst);
+		printf("dumping %s\n", outfile.c_str());
+	}
+}
+
 
 int main(int argc, char** argv)
 {
@@ -93,6 +113,8 @@ int main(int argc, char** argv)
 	cv::createTrackbar("Slice", "HDF", &slice, maxSlice, onTrackbar);	
 	onTrackbar(slice, 0);
 	cv::waitKey(0);
+
+	//dumpSlices(dataset, 0, 50);
 
 	dataset.close();
 	file.close();

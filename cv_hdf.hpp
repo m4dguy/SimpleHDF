@@ -3,6 +3,9 @@
 
 #include <H5Cpp.h>
 
+#ifndef SIMPLE_HDF_CV_HPP
+#define SIMPLE_HDF_CV_HPP
+
 #define IMGRANK 2
 #define uint unsigned int
 
@@ -93,9 +96,10 @@ namespace cv{
 				const int height = (int)dims[heightDimension];
 				const int type = getCvType(dataset);
 
+				//dynamically adapt size of cv::Mat to match slice size
 				if ((dst.size().width != width) || (dst.size().height != height) || (dst.type() != type)){
 					dst.release();
-					dst = cv::Mat(cv::Size((int)width, (int)height), type);
+					dst = cv::Mat(cv::Size(width, height), type);
 				}
 
 				void *buffer = (void*)dst.data;
@@ -150,3 +154,4 @@ namespace cv{
 		}
 	}
 }
+#endif

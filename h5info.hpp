@@ -4,6 +4,9 @@
 
 #include <H5Cpp.h>
 
+#ifndef SIMPLE_HDF_INFO_HPP
+#define SIMPLE_HDF_INFO_HPP
+
 /**
  * Stupid utility stuff for getting H5 file and dataspace information.
  * Single header without other dependencies (except H5Cpp.h).
@@ -53,7 +56,7 @@ namespace simpleHDF{
 	 * @return std::vector containing the DataSet's attribute name.
 	 */
 	std::vector<std::string> getAttributes(H5::H5Location& loc){
-		uint i = 0;
+		unsigned int i = 0;
 		herr_t err = 0;
 		std::vector<std::string> attributes;
 		attributes.reserve(loc.getNumAttrs());
@@ -62,7 +65,7 @@ namespace simpleHDF{
 	}
 
 	/**
-	 * Get rank and each single dataspace dimensions.
+	 * Get rank of each single dataspace dimensions.
 	 * @param space DataSpace to check for info.
 	 */ 
 	SpaceDimensions getDataSpaceDimensions(H5::DataSpace& space){
@@ -74,3 +77,4 @@ namespace simpleHDF{
 	}
 
 }
+#endif
